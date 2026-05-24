@@ -2424,3 +2424,18 @@ body::before {
   color: var(--text-muted);
   padding-top: 4px;
 }
+
+/* ── Nível do rio indisponível ── */
+.nav-unavailable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(245,158,11,0.3);
+  background: rgba(245,158,11,0.05);
+}
+.nav-unavailable-icon { font-size: 18px; flex-shrink: 0; }
+.nav-unavailable-label { font-size: 13px; font-weight: 700; color: var(--amber-light); }
+.nav-unavailable-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+.nav-station-note { font-size: 10px; color: var(--text-muted); }

@@ -46,19 +46,37 @@ function PiracemaBanner() {
   )
 }
 
-function NavSection({ riverLevel }) {
-  const nav = getNavStatus(riverLevel ? parseFloat(riverLevel) : null)
+function NavSection({ riverLevel, stationName }) {
+  const nav = getNavStatus(riverLevel != null ? parseFloat(riverLevel) : null)
+  const hasLocation = !!stationName
 
   return (
     <div className="rules-section">
       <h3 className="rules-section-title">⚓ Navegação</h3>
 
       {nav ? (
-        <div className="nav-status" style={{ borderColor: nav.color }}>
-          <span className="nav-status-icon">{nav.icon}</span>
+        <>
+          <div className="nav-status" style={{ borderColor: nav.color }}>
+            <span className="nav-status-icon">{nav.icon}</span>
+            <div>
+              <div className="nav-status-label" style={{ color: nav.color }}>{nav.label}</div>
+              <div className="nav-status-tip">{nav.tip}</div>
+            </div>
+          </div>
+          {stationName && (
+            <p className="rules-note nav-station-note">📊 Estação: {stationName}</p>
+          )}
+        </>
+      ) : hasLocation ? (
+        // Localização definida mas ANA não retornou dados
+        <div className="nav-unavailable">
+          <span className="nav-unavailable-icon">📡</span>
           <div>
-            <div className="nav-status-label" style={{ color: nav.color }}>{nav.label}</div>
-            <div className="nav-status-tip">{nav.tip}</div>
+            <div className="nav-unavailable-label">Dados indisponíveis</div>
+            <div className="nav-unavailable-sub">
+              {stationName ? `Estação ${stationName} sem resposta.` : 'ANA sem resposta.'}{' '}
+              Consulte os links abaixo antes de navegar.
+            </div>
           </div>
         </div>
       ) : (
@@ -91,7 +109,7 @@ function NavSection({ riverLevel }) {
   )
 }
 
-export default function FishingRules({ riverLevel }) {
+export default function FishingRules({ riverLevel, stationName }) {
   return (
     <div className="fishing-rules">
       <PiracemaBanner />
@@ -116,7 +134,7 @@ export default function FishingRules({ riverLevel }) {
         </a>
       </div>
 
-      <NavSection riverLevel={riverLevel} />
+      <NavSection riverLevel={riverLevel} stationName={stationName} />
     </div>
   )
 }

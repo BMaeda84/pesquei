@@ -118,7 +118,7 @@ export default function FishingDashboard({ location }) {
         ))}
       </div>
 
-      <FishingRules riverLevel={riverLevel} />
+      <FishingRules riverLevel={riverLevel} stationName={stationName} />
     </div>
   )
 }
