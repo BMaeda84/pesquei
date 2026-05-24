@@ -8,6 +8,7 @@ import HowToUse from './components/HowToUse'
 import InstallBanner from './components/InstallBanner'
 import ProfileSetup from './components/ProfileSetup'
 import DayRanking from './components/DayRanking'
+import About from './components/About'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { useProfile } from './hooks/useProfile'
 import './App.css'
@@ -37,6 +38,7 @@ export default function App() {
   const [showHowTo, setShowHowTo] = useState(false)
   const [showInstall, setShowInstall] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
   const { canInstall, install } = useInstallPrompt()
   const { profile, loading: profileLoading, saveProfile } = useProfile()
 
@@ -87,7 +89,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Pesquei!</h1>
+        <h1 className="app-title-btn" onClick={() => setShowAbout(true)} title="Sobre o Pesquei!">Pesquei!</h1>
         <div className="header-right">
           {location && (
             <span className="header-coords">
@@ -140,6 +142,8 @@ export default function App() {
       )}
 
       {showHowTo && <HowToUse onClose={() => setShowHowTo(false)} />}
+
+      {showAbout && <About onClose={() => setShowAbout(false)} />}
 
       {editingProfile && (
         <ProfileSetup

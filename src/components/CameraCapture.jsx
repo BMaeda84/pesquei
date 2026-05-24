@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
+import { applyWatermark, saveImage, sharePhoto } from '../utils/watermark'
+import dayjs from 'dayjs'
 
-// Comprime a imagem via canvas antes de enviar à API
 async function compressImage(file) {
   return new Promise((resolve) => {
     const reader = new FileReader()
@@ -15,8 +16,7 @@ async function compressImage(file) {
           if (height > MAX) { width = Math.round(width * MAX / height); height = MAX }
         }
         const canvas = document.createElement('canvas')
-        canvas.width = width
-        canvas.height = height
+        canvas.width = width; canvas.height = height
         canvas.getContext('2d').drawImage(img, 0, 0, width, height)
         resolve({
           data: canvas.toDataURL('image/jpeg', 0.85).split(',')[1],
@@ -33,10 +33,13 @@ const CERTEZA_LABEL = { alta: 'Alta confiança', media: 'Confiança média', bai
 const CERTEZA_COLOR = { alta: '#22c55e', media: '#f59e0b', baixa: '#ef4444' }
 
 export default function CameraCapture({ onIdentified, onSkip }) {
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState(null)
-  const [preview, setPreview] = useState(null)
-  const [error, setError] = useState(null)
+  const [loading, setLoading]         = useState(false)
+  const [result, setResult]           = useState(null)
+  const [preview, setPreview]         = useState(null)
+  const [originalFile, setOriginalFile] = useState(null)
+  const [error, setError]             = useState(null)
+  const [wmDataUrl, setWmDataUrl]     = useState(null)
+  const [wmLoading, setWmLoading]     = useState(false)
   const inputRef = useRef(null)
 
   async function handleFile(e) {
@@ -44,9 +47,11 @@ export default function CameraCapture({ onIdentified, onSkip }) {
     if (!file) return
 
     setPreview(URL.createObjectURL(file))
+    setOriginalFile(file)
     setLoading(true)
     setResult(null)
     setError(null)
+    setWmDataUrl(null)
 
     try {
       const { data, mediaType } = await compressImage(file)
@@ -65,11 +70,39 @@ export default function CameraCapture({ onIdentified, onSkip }) {
   }
 
   function retry() {
-    setPreview(null)
-    setResult(null)
-    setError(null)
-    // pequeno delay para o browser resetar o input
+    setPreview(null); setResult(null); setError(null)
+    setOriginalFile(null); setWmDataUrl(null)
     setTimeout(() => inputRef.current?.click(), 50)
+  }
+
+  async function handleCreateWatermark() {
+    if (!originalFile) return
+    setWmLoading(true)
+    try {
+      const url = await applyWatermark(originalFile, result?.especie)
+      setWmDataUrl(url)
+    } catch { /* silently fail */ }
+    setWmLoading(false)
+  }
+
+  // Peixe congelado — Easter egg
+  if (result?.congelado) {
+    return (
+      <div className="camera-capture">
+        <div className="frozen-banner">
+          <div className="frozen-emoji">🧊🐟🧊</div>
+          <h3 className="frozen-title">Bem espertinho você! =P</h3>
+          <p className="frozen-msg">
+            Esse peixe parece estar congelado ou já processado.<br />
+            Só capturas frescas entram no ranking!
+          </p>
+          <div className="id-actions">
+            <button className="btn-primary" onClick={retry}>Fotografar peixe fresco</button>
+            <button className="btn-secondary" onClick={onSkip}>Registrar manualmente</button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -124,7 +157,7 @@ export default function CameraCapture({ onIdentified, onSkip }) {
             </div>
           )}
 
-          {result && (
+          {result && !result.congelado && (
             <div className="id-result">
               {result.especie ? (
                 <>
@@ -140,7 +173,67 @@ export default function CameraCapture({ onIdentified, onSkip }) {
                   {result.observacao && (
                     <p className="id-obs">{result.observacao}</p>
                   )}
-                  <div className="id-actions">
+
+                  {/* Watermark — só aparece se há pessoa na foto */}
+                  {result.com_pessoa && (
+                    <div className="watermark-section">
+                      {!wmDataUrl ? (
+                        <button
+                          className="btn-watermark"
+                          onClick={handleCreateWatermark}
+                          disabled={wmLoading}
+                        >
+                          {wmLoading ? 'Criando…' : '🏷️ Criar foto com marca Pesquei!'}
+                        </button>
+                      ) : (
+                        <div className="wm-result">
+                          <img src={wmDataUrl} className="wm-preview" alt="Foto com marca" />
+                          <div className="wm-actions">
+                            <button
+                              className="btn-share btn-share-main"
+                              onClick={() => sharePhoto(wmDataUrl, result.especie)}
+                            >
+                              📤 Compartilhar foto
+                            </button>
+                            <div className="wm-save-row">
+                              <button
+                                className="btn-share btn-whatsapp"
+                                onClick={async () => {
+                                  const blob = await (await fetch(wmDataUrl)).blob()
+                                  const file = new File([blob], 'pescaria.jpg', { type: 'image/jpeg' })
+                                  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+                                    await navigator.share({ title: 'Minha pescaria', files: [file] })
+                                  } else {
+                                    const t = encodeURIComponent(`🎣 Pescando com o Pesquei! — ${result.especie}`)
+                                    window.open(`https://wa.me/?text=${t}`, '_blank')
+                                  }
+                                }}
+                              >
+                                💬 WhatsApp
+                              </button>
+                              <button
+                                className="btn-share btn-facebook"
+                                onClick={() => {
+                                  const u = encodeURIComponent('https://pesquei.vercel.app')
+                                  window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`, '_blank')
+                                }}
+                              >
+                                📘 Facebook
+                              </button>
+                            </div>
+                            <button
+                              className="btn-secondary btn-full"
+                              onClick={() => saveImage(wmDataUrl, `pescaria-${result.especie || 'pesquei'}.jpg`)}
+                            >
+                              💾 Salvar no celular
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="id-actions" style={{ marginTop: 8 }}>
                     <button className="btn-primary" onClick={() => onIdentified(result)}>
                       Usar este resultado
                     </button>
