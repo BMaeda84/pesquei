@@ -6,14 +6,18 @@ import FishGuide from './components/FishGuide'
 import GpsConfirmModal from './components/GpsConfirmModal'
 import HowToUse from './components/HowToUse'
 import InstallBanner from './components/InstallBanner'
+import ProfileSetup from './components/ProfileSetup'
+import DayRanking from './components/DayRanking'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
+import { useProfile } from './hooks/useProfile'
 import './App.css'
 
 const TABS = [
-  { id: 'index', label: '🎣 Índice' },
-  { id: 'map',   label: '📍 Local' },
-  { id: 'guide', label: '🐟 Guia' },
-  { id: 'diary', label: '🏆 Dex' },
+  { id: 'index',   label: '🎣 Índice' },
+  { id: 'map',     label: '📍 Local' },
+  { id: 'guide',   label: '🐟 Guia' },
+  { id: 'diary',   label: '🏆 Dex' },
+  { id: 'ranking', label: '📊 Ranking' },
 ]
 
 function HeaderWave() {
@@ -33,6 +37,7 @@ export default function App() {
   const [showHowTo, setShowHowTo] = useState(false)
   const [showInstall, setShowInstall] = useState(false)
   const { canInstall, install } = useInstallPrompt()
+  const { profile, loading: profileLoading, saveProfile } = useProfile()
 
   // Solicita GPS ao abrir
   useEffect(() => {
@@ -66,6 +71,18 @@ export default function App() {
     setTab('index')
   }
 
+  // Enquanto o perfil carrega, mostra nada (evita flash do setup)
+  if (profileLoading) return null
+
+  // Perfil não configurado → exibe tela de setup
+  if (!profile) {
+    return (
+      <div className="app">
+        <ProfileSetup onSave={saveProfile} />
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -76,16 +93,24 @@ export default function App() {
               {location.lat.toFixed(3)}, {location.lng.toFixed(3)}
             </span>
           )}
+          {/* Avatar do perfil */}
+          <div className="header-avatar" title={profile.name}>
+            {profile.photoData
+              ? <img src={profile.photoData} className="header-avatar-img" alt="" />
+              : <span>{profile.avatar || '🎣'}</span>
+            }
+          </div>
           <button className="btn-help" onClick={() => setShowHowTo(true)} title="Como usar">?</button>
         </div>
         <HeaderWave />
       </header>
 
       <main className="app-main">
-        {tab === 'index' && <FishingDashboard location={location} />}
-        {tab === 'map'   && <LocationPicker location={location} onSelect={handleSelectLocation} />}
-        {tab === 'guide' && <FishGuide location={location} />}
-        {tab === 'diary' && <FishDex />}
+        {tab === 'index'   && <FishingDashboard location={location} />}
+        {tab === 'map'     && <LocationPicker location={location} onSelect={handleSelectLocation} />}
+        {tab === 'guide'   && <FishGuide location={location} />}
+        {tab === 'diary'   && <FishDex />}
+        {tab === 'ranking' && <DayRanking profile={profile} />}
       </main>
 
       <nav className="bottom-nav">

@@ -1,13 +1,18 @@
 import { openDB } from 'idb'
 
 const DB_NAME = 'pesquei-db'
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 function getDB() {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      db.createObjectStore('cache')
-      db.createObjectStore('diary', { keyPath: 'id', autoIncrement: true })
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        db.createObjectStore('cache')
+        db.createObjectStore('diary', { keyPath: 'id', autoIncrement: true })
+      }
+      if (oldVersion < 2) {
+        db.createObjectStore('profile')
+      }
     },
   })
 }
@@ -42,4 +47,20 @@ export async function getDiaryEntries() {
 export async function deleteDiaryEntry(id) {
   const db = await getDB()
   return db.delete('diary', id)
+}
+
+// Profile store — single record keyed 'current'
+export async function getProfile() {
+  const db = await getDB()
+  return db.get('profile', 'current') ?? null
+}
+
+export async function saveProfile(profile) {
+  const db = await getDB()
+  return db.put('profile', profile, 'current')
+}
+
+export async function clearProfile() {
+  const db = await getDB()
+  return db.delete('profile', 'current')
 }

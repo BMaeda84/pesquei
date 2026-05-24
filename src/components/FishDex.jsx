@@ -99,7 +99,12 @@ function DexDetail({ fish, catches, onClose, onRefresh }) {
   const caught = catches.length > 0
 
   async function handleSave(form) {
-    await saveDiaryEntry({ ...form, date: new Date().toISOString() })
+    await saveDiaryEntry({
+      ...form,
+      icon: fish.icon,
+      verified: !!prefill,
+      date: new Date().toISOString(),
+    })
     await onRefresh()
     setMode('info')
     setPrefill(null)
