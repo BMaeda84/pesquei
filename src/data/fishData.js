@@ -3,6 +3,7 @@
 export const FISH = [
   {
     id: 'tilapia',
+    dex: '001',
     name: 'Tilápia',
     icon: '🐟',
     description: 'A mais abundante do Tietê. Resistente, briga bastante.',
@@ -18,6 +19,7 @@ export const FISH = [
   },
   {
     id: 'carpa',
+    dex: '002',
     name: 'Carpa',
     icon: '🐠',
     description: 'Peixe grande e cauteloso. Exige paciência e silêncio.',
@@ -33,6 +35,7 @@ export const FISH = [
   },
   {
     id: 'pacu',
+    dex: '003',
     name: 'Pacu',
     icon: '🐡',
     description: 'Ótimo para comer. Ativo quando a temperatura está agradável.',
@@ -48,6 +51,7 @@ export const FISH = [
   },
   {
     id: 'traira',
+    dex: '004',
     name: 'Traíra',
     icon: '🦈',
     description: 'Predadora feroz, especialmente ativa no amanhecer e anoitecer.',
@@ -63,6 +67,7 @@ export const FISH = [
   },
   {
     id: 'bagre',
+    dex: '005',
     name: 'Bagre / Mandi',
     icon: '🐟',
     description: 'Noturno por excelência. Usa quimiorreceptores para localizar comida.',
@@ -78,6 +83,7 @@ export const FISH = [
   },
   {
     id: 'tucunare',
+    dex: '006',
     name: 'Tucunaré',
     icon: '🐠',
     description: 'Predador agressivo, mais comum em represas. Briga muito no anzol.',
@@ -93,6 +99,7 @@ export const FISH = [
   },
   {
     id: 'lambari',
+    dex: '007',
     name: 'Lambari',
     icon: '🐟',
     description: 'Pequeno e abundante. Ótimo para iniciantes e crianças. Também serve de isca viva.',

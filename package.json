@@ -11,6 +11,7 @@
     "icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
     "dayjs": "^1.11.20",
     "idb": "^8.0.3",
     "leaflet": "^1.9.4",

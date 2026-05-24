@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import LocationPicker from './components/LocationPicker'
 import FishingDashboard from './components/FishingDashboard'
-import Diary from './components/Diary'
+import FishDex from './components/FishDex'
 import FishGuide from './components/FishGuide'
 import GpsConfirmModal from './components/GpsConfirmModal'
 import HowToUse from './components/HowToUse'
@@ -13,7 +13,7 @@ const TABS = [
   { id: 'index', label: '🎣 Índice' },
   { id: 'map',   label: '📍 Local' },
   { id: 'guide', label: '🐟 Guia' },
-  { id: 'diary', label: '📓 Diário' },
+  { id: 'diary', label: '🏆 Dex' },
 ]
 
 function HeaderWave() {
@@ -85,7 +85,7 @@ export default function App() {
         {tab === 'index' && <FishingDashboard location={location} />}
         {tab === 'map'   && <LocationPicker location={location} onSelect={handleSelectLocation} />}
         {tab === 'guide' && <FishGuide location={location} />}
-        {tab === 'diary' && <Diary location={location} />}
+        {tab === 'diary' && <FishDex />}
       </main>
 
       <nav className="bottom-nav">
