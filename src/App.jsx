@@ -5,34 +5,51 @@ import Diary from './components/Diary'
 import FishGuide from './components/FishGuide'
 import GpsConfirmModal from './components/GpsConfirmModal'
 import HowToUse from './components/HowToUse'
+import InstallBanner from './components/InstallBanner'
+import { useInstallPrompt } from './hooks/useInstallPrompt'
 import './App.css'
 
 const TABS = [
   { id: 'index', label: '🎣 Índice' },
-  { id: 'map', label: '📍 Local' },
+  { id: 'map',   label: '📍 Local' },
   { id: 'guide', label: '🐟 Guia' },
   { id: 'diary', label: '📓 Diário' },
 ]
+
+function HeaderWave() {
+  return (
+    <div className="header-wave">
+      <svg viewBox="0 0 480 14" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,7 C80,14 160,0 240,7 C320,14 400,0 480,7 L480,14 L0,14 Z" fill="#061520"/>
+      </svg>
+    </div>
+  )
+}
 
 export default function App() {
   const [tab, setTab] = useState('index')
   const [location, setLocation] = useState(null)
   const [gpsCandidate, setGpsCandidate] = useState(null)
   const [showHowTo, setShowHowTo] = useState(false)
+  const [showInstall, setShowInstall] = useState(false)
+  const { canInstall, install } = useInstallPrompt()
 
-  // Solicita GPS ao abrir o app
+  // Solicita GPS ao abrir
   useEffect(() => {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setGpsCandidate({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-      },
-      () => {
-        // Permissão negada ou erro — sem modal, usuário escolhe no mapa
-      },
+      (pos) => setGpsCandidate({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {},
       { timeout: 8000, maximumAge: 60000 }
     )
   }, [])
+
+  // Mostra banner de instalação após 4 segundos
+  useEffect(() => {
+    if (!canInstall) return
+    const t = setTimeout(() => setShowInstall(true), 4000)
+    return () => clearTimeout(t)
+  }, [canInstall])
 
   function handleConfirmGps() {
     setLocation(gpsCandidate)
@@ -54,14 +71,19 @@ export default function App() {
       <header className="app-header">
         <h1>Pesquei!</h1>
         <div className="header-right">
-          {location && <span className="header-coords">📍 {location.lat.toFixed(3)}, {location.lng.toFixed(3)}</span>}
+          {location && (
+            <span className="header-coords">
+              {location.lat.toFixed(3)}, {location.lng.toFixed(3)}
+            </span>
+          )}
           <button className="btn-help" onClick={() => setShowHowTo(true)} title="Como usar">?</button>
         </div>
+        <HeaderWave />
       </header>
 
       <main className="app-main">
         {tab === 'index' && <FishingDashboard location={location} />}
-        {tab === 'map' && <LocationPicker location={location} onSelect={handleSelectLocation} />}
+        {tab === 'map'   && <LocationPicker location={location} onSelect={handleSelectLocation} />}
         {tab === 'guide' && <FishGuide location={location} />}
         {tab === 'diary' && <Diary location={location} />}
       </main>
@@ -78,7 +100,6 @@ export default function App() {
         ))}
       </nav>
 
-      {/* Modal de confirmação de GPS */}
       {gpsCandidate && (
         <GpsConfirmModal
           coords={gpsCandidate}
@@ -88,8 +109,14 @@ export default function App() {
         />
       )}
 
-      {/* Modal de instruções */}
       {showHowTo && <HowToUse onClose={() => setShowHowTo(false)} />}
+
+      {showInstall && (
+        <InstallBanner
+          onInstall={() => { install(); setShowInstall(false) }}
+          onDismiss={() => setShowInstall(false)}
+        />
+      )}
     </div>
   )
 }

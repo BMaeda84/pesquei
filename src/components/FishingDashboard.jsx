@@ -58,8 +58,9 @@ export default function FishingDashboard({ location }) {
   if (!location) {
     return (
       <div className="no-location">
-        <span className="fish-emoji">🎣</span>
-        <p>Marque o ponto no mapa para ver o índice de pesca</p>
+        <span className="no-location-icon">🎣</span>
+        <p>Marque onde você vai pescar para ver o índice do dia</p>
+        <span className="no-location-hint">Toque em 📍 Local para escolher o ponto</span>
       </div>
     )
   }
