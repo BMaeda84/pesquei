@@ -260,8 +260,8 @@ export default function FishDex() {
       {/* Cabeçalho estilo Pokédex */}
       <div className="dex-header">
         <div className="dex-title-area">
-          <span className="dex-title-pre">Tietê</span>
-          <span className="dex-title-main">DEX</span>
+          <span className="dex-title-pre">Tei</span>
+          <span className="dex-title-main">oteca</span>
         </div>
         <div className="dex-progress-area">
           <div className="dex-progress-bar">
@@ -292,7 +292,7 @@ export default function FishDex() {
       {totalCaught === 0 && (
         <div className="dex-empty-hint">
           <span>🎣</span>
-          <p>Registre suas capturas para desbloquear o Tietê Dex!</p>
+          <p>Registre suas capturas para desbloquear a Teioteca!</p>
         </div>
       )}
 

@@ -16,7 +16,7 @@ const TABS = [
   { id: 'index',   label: '🎣 Índice' },
   { id: 'map',     label: '📍 Local' },
   { id: 'guide',   label: '🐟 Guia' },
-  { id: 'diary',   label: '🏆 Dex' },
+  { id: 'diary',   label: '🐟 Teioteca' },
   { id: 'ranking', label: '📊 Ranking' },
 ]
 
