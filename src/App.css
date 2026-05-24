@@ -48,9 +48,30 @@ body {
   letter-spacing: -0.5px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .header-coords {
   font-size: 11px;
   color: var(--text-muted);
+}
+
+.btn-help {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Main */
@@ -418,4 +439,346 @@ body {
   font-size: 12px;
   cursor: pointer;
   align-self: flex-end;
+}
+
+/* ── Modais ─────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--bg2);
+  border-radius: 16px 16px 12px 12px;
+  padding: 24px 20px 20px;
+  width: 100%;
+  max-width: 460px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-tall {
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-icon {
+  font-size: 36px;
+  text-align: center;
+}
+
+.modal h2 {
+  font-size: 20px;
+  text-align: center;
+}
+
+.modal-desc {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-coords {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--green-light);
+  font-family: monospace;
+  border: 1px solid var(--border);
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-full {
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.btn-secondary {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ── How to use steps ───────────────────── */
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.step-icon {
+  font-size: 24px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.step-content strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.step-content p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Fish Guide ─────────────────────────── */
+.fish-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guide-header h2 {
+  font-size: 18px;
+}
+
+.guide-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.hour-selector {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hour-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.hour-range {
+  width: 100%;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+.hour-marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.active-count {
+  font-size: 13px;
+  color: var(--green-light);
+  font-weight: 600;
+}
+
+.fish-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fish-section-divider {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 0 4px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.fish-card {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.fish-active {
+  border-color: #2d6a40;
+}
+
+.fish-inactive {
+  opacity: 0.65;
+}
+
+.fish-card-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fish-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fish-emoji {
+  font-size: 22px;
+}
+
+.fish-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fish-peak {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.fish-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fish-badge-active {
+  background: #14532d;
+  color: #4ade80;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.fish-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.fish-details {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.fish-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding-top: 12px;
+}
+
+.fish-section-title {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.baits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bait-item {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.bait-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.bait-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bait-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.bait-natural {
+  background: #1a3a2a;
+  color: #86efac;
+}
+
+.bait-artificial {
+  background: #1e2a4a;
+  color: #93c5fd;
+}
+
+.bait-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.fish-technique {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 10px 12px;
 }
