@@ -1,15 +1,19 @@
 import { useState, useMemo } from 'react'
-import { FISH, getFishByHour } from '../data/fishData'
+import { getFishByZoneAndHour, getNearestZone } from '../data/fishData'
 
 function BaitTag({ type }) {
   return <span className={`bait-tag bait-${type}`}>{type === 'artificial' ? 'Artificial' : 'Natural'}</span>
 }
 
-function FishCard({ fish, isActive }) {
+function ProminentBadge() {
+  return <span className="fish-badge-prominent">Destaque aqui</span>
+}
+
+function FishCard({ fish, isActive, isProminent }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className={`fish-card ${isActive ? 'fish-active' : 'fish-inactive'}`}>
+    <div className={`fish-card ${isActive ? 'fish-active' : 'fish-inactive'} ${isProminent ? 'fish-prominent' : ''}`}>
       <div className="fish-card-header" onClick={() => setOpen(!open)}>
         <div className="fish-name-row">
           <span className="fish-emoji">{fish.icon}</span>
@@ -19,7 +23,8 @@ function FishCard({ fish, isActive }) {
           </div>
         </div>
         <div className="fish-header-right">
-          {isActive && <span className="fish-badge-active">Ativo agora</span>}
+          {isProminent && <ProminentBadge />}
+          {isActive && !isProminent && <span className="fish-badge-active">Ativo agora</span>}
           <span className="fish-chevron">{open ? '▲' : '▼'}</span>
         </div>
       </div>
@@ -49,17 +54,31 @@ function FishCard({ fish, isActive }) {
   )
 }
 
-export default function FishGuide() {
+export default function FishGuide({ location }) {
   const [selectedHour, setSelectedHour] = useState(new Date().getHours())
-  const { active, inactive } = useMemo(() => getFishByHour(selectedHour), [selectedHour])
+
+  // Zona mais próxima baseada no GPS/ponto marcado
+  const zone = useMemo(() => getNearestZone(location?.lat, location?.lng), [location])
+
+  const { active, inactive } = useMemo(
+    () => getFishByZoneAndHour(selectedHour, zone),
+    [selectedHour, zone]
+  )
 
   const hourLabel = `${String(selectedHour).padStart(2, '0')}:00`
+  const prominentIds = zone?.prominentFish ?? []
 
   return (
     <div className="fish-guide">
       <div className="guide-header">
         <h2>Guia de Peixes</h2>
-        <p className="guide-subtitle">Rio Tietê — interior de SP</p>
+        {zone
+          ? <p className="guide-subtitle">📍 {zone.name}</p>
+          : <p className="guide-subtitle">Rio Tietê — interior de SP</p>
+        }
+        {!location && (
+          <p className="guide-no-location">Marque um ponto no mapa para ver as espécies do seu trecho</p>
+        )}
       </div>
 
       <div className="hour-selector">
@@ -78,14 +97,29 @@ export default function FishGuide() {
 
       <div className="active-count">
         🎣 {active.length} espécie{active.length !== 1 ? 's' : ''} ativa{active.length !== 1 ? 's' : ''} às {hourLabel}
+        {zone && <span className="zone-type-badge">{zone.type === 'represa' ? '🏞️ Represa' : '🌊 Rio'}</span>}
       </div>
 
       <div className="fish-list">
-        {active.map(f => <FishCard key={f.id} fish={f} isActive />)}
+        {active.map(f => (
+          <FishCard
+            key={f.id}
+            fish={f}
+            isActive
+            isProminent={prominentIds.includes(f.id)}
+          />
+        ))}
         {inactive.length > 0 && (
           <>
             <div className="fish-section-divider">Menos ativos neste horário</div>
-            {inactive.map(f => <FishCard key={f.id} fish={f} isActive={false} />)}
+            {inactive.map(f => (
+              <FishCard
+                key={f.id}
+                fish={f}
+                isActive={false}
+                isProminent={prominentIds.includes(f.id)}
+              />
+            ))}
           </>
         )}
       </div>

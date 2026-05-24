@@ -62,7 +62,7 @@ export default function App() {
       <main className="app-main">
         {tab === 'index' && <FishingDashboard location={location} />}
         {tab === 'map' && <LocationPicker location={location} onSelect={handleSelectLocation} />}
-        {tab === 'guide' && <FishGuide />}
+        {tab === 'guide' && <FishGuide location={location} />}
         {tab === 'diary' && <Diary location={location} />}
       </main>
 

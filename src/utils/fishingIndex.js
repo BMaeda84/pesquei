@@ -56,6 +56,41 @@ export function getIndexLabel(score) {
   return { label: 'Ruim', color: '#ef4444' }
 }
 
+// Tipos de ponto por espécie ativa — onde procurar no rio/represa
+const SPOT_BY_FISH = {
+  tilapia:  { icon: '🪨', spot: 'Fundo raso perto de pedras ou entulho submerso', depth: 'Raso (0,5–2m)' },
+  carpa:    { icon: '🌿', spot: 'Fundo lodoso em enseadas calmas, longe da correnteza', depth: 'Fundo (2–5m)' },
+  pacu:     { icon: '🌳', spot: 'Meia-água sob árvores que penduram sobre o rio', depth: 'Médio (1–3m)' },
+  traira:   { icon: '🌾', spot: 'Beira com macrófitas (aguapé, taboas) em água rasa', depth: 'Raso (0,3–1m)' },
+  bagre:    { icon: '💧', spot: 'Canal principal em poços fundos, correnteza lenta', depth: 'Fundo (3m+)' },
+  tucunare: { icon: '🪵', spot: 'Junto a troncos submersos, pilares de pontes ou pedras grandes', depth: 'Médio (1–4m)' },
+  lambari:  { icon: '🏖️', spot: 'Qualquer ponto de margem, especialmente em afluentes', depth: 'Muito raso' },
+}
+
+// Gera sugestões de pontos baseadas nos peixes ativos agora
+export function getBestSpots(activeFish, zone) {
+  if (!activeFish || activeFish.length === 0) return []
+
+  const seen = new Set()
+  const spots = []
+
+  for (const fish of activeFish.slice(0, 4)) {
+    const s = SPOT_BY_FISH[fish.id]
+    if (!s || seen.has(s.spot)) continue
+    seen.add(s.spot)
+    spots.push({ fish: fish.name, icon: s.icon, spot: s.spot, depth: s.depth })
+  }
+
+  // Dica extra baseada no tipo do trecho (represa vs rio livre)
+  if (zone?.type === 'represa') {
+    spots.push({ fish: null, icon: '⚓', spot: 'Em represas: explore as curvas de nível — peixes seguem as bordas da bacia antiga do rio', depth: 'Varia' })
+  } else if (zone?.type === 'rio') {
+    spots.push({ fish: null, icon: '🌀', spot: 'Em trecho livre: pesque logo abaixo de corredeiras — oxigênio alto atrai peixes', depth: 'Médio' })
+  }
+
+  return spots
+}
+
 // Calcula os melhores horários do dia para pescar
 export function getBestHours(weather) {
   const hours = []

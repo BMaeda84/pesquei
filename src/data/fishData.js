@@ -124,3 +124,44 @@ export function getFishByHour(hour) {
   const rest = FISH.filter(f => !active.find(a => a.id === f.id))
   return { active, inactive: rest }
 }
+
+// Trechos/represas do Rio Tietê no interior de SP
+// prominentFish: espécies com maior presença naquele trecho
+export const TIETE_ZONES = [
+  { id: 'barra-bonita', name: 'Represa Barra Bonita', lat: -22.51, lon: -48.56, type: 'represa', prominentFish: ['tilapia', 'carpa', 'pacu'] },
+  { id: 'bariri',       name: 'Represa Bariri',       lat: -22.08, lon: -48.74, type: 'represa', prominentFish: ['tilapia', 'tucunare', 'pacu'] },
+  { id: 'ibitinga',     name: 'Represa Ibitinga',     lat: -21.76, lon: -48.99, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'carpa'] },
+  { id: 'promissao',    name: 'Represa Promissão',    lat: -21.49, lon: -49.86, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'bagre'] },
+  { id: 'nova-av',      name: 'Represa Nova Avanhandava', lat: -21.12, lon: -50.42, type: 'represa', prominentFish: ['tucunare', 'traira', 'tilapia'] },
+  { id: 'tres-irmaos',  name: 'Represa Três Irmãos',  lat: -20.68, lon: -51.21, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'pacu'] },
+  // trecho de rio livre (entre represas)
+  { id: 'rio-medio',    name: 'Rio Tietê (trecho livre)', lat: -22.62, lon: -48.95, type: 'rio', prominentFish: ['bagre', 'traira', 'lambari'] },
+]
+
+// Retorna a zona mais próxima da coordenada informada
+export function getNearestZone(lat, lon) {
+  if (!lat || !lon) return null
+  let best = null, bestDist = Infinity
+  for (const z of TIETE_ZONES) {
+    const d = Math.hypot(z.lat - lat, z.lon - lon)
+    if (d < bestDist) { bestDist = d; best = z }
+  }
+  return best
+}
+
+// Reordena peixes colocando os proeminentes da zona no topo
+export function getFishByZoneAndHour(hour, zone) {
+  const { active, inactive } = getFishByHour(hour)
+  if (!zone) return { active, inactive }
+
+  const sortByZone = (list) =>
+    [...list].sort((a, b) => {
+      const aIdx = zone.prominentFish.indexOf(a.id)
+      const bIdx = zone.prominentFish.indexOf(b.id)
+      const aVal = aIdx === -1 ? 99 : aIdx
+      const bVal = bIdx === -1 ? 99 : bIdx
+      return aVal - bVal
+    })
+
+  return { active: sortByZone(active), inactive: sortByZone(inactive) }
+}
