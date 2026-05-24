@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { FISH } from '../data/fishData'
+import { MIN_SIZES } from '../data/fishingRules'
 import { getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../utils/cache'
 import CameraCapture from './CameraCapture'
 import dayjs from 'dayjs'
@@ -159,6 +160,18 @@ function DexDetail({ fish, catches, onClose, onRefresh }) {
                     <span className="stat-l">maior</span>
                   </div>
                 </div>
+
+                {/* Tamanho mínimo IBAMA */}
+                {MIN_SIZES[fish.id] && (
+                  <div className="detail-section">
+                    <div className="detail-section-label">Regra IBAMA</div>
+                    <div className="detail-rule-chip">
+                      {MIN_SIZES[fish.id].cm
+                        ? `📏 Mínimo ${MIN_SIZES[fish.id].cm} cm para retenção`
+                        : `♻️ ${MIN_SIZES[fish.id].note}`}
+                    </div>
+                  </div>
+                )}
 
                 {/* Melhor isca */}
                 <div className="detail-section">

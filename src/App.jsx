@@ -36,6 +36,7 @@ export default function App() {
   const [gpsCandidate, setGpsCandidate] = useState(null)
   const [showHowTo, setShowHowTo] = useState(false)
   const [showInstall, setShowInstall] = useState(false)
+  const [editingProfile, setEditingProfile] = useState(false)
   const { canInstall, install } = useInstallPrompt()
   const { profile, loading: profileLoading, saveProfile } = useProfile()
 
@@ -93,13 +94,17 @@ export default function App() {
               {location.lat.toFixed(3)}, {location.lng.toFixed(3)}
             </span>
           )}
-          {/* Avatar do perfil */}
-          <div className="header-avatar" title={profile.name}>
+          {/* Avatar do perfil — clique para editar */}
+          <button
+            className="header-avatar"
+            title={`${profile.name} · toque para editar`}
+            onClick={() => setEditingProfile(true)}
+          >
             {profile.photoData
               ? <img src={profile.photoData} className="header-avatar-img" alt="" />
               : <span>{profile.avatar || '🎣'}</span>
             }
-          </div>
+          </button>
           <button className="btn-help" onClick={() => setShowHowTo(true)} title="Como usar">?</button>
         </div>
         <HeaderWave />
@@ -135,6 +140,14 @@ export default function App() {
       )}
 
       {showHowTo && <HowToUse onClose={() => setShowHowTo(false)} />}
+
+      {editingProfile && (
+        <ProfileSetup
+          initial={profile}
+          onSave={data => { saveProfile(data); setEditingProfile(false) }}
+          onCancel={() => setEditingProfile(false)}
+        />
+      )}
 
       {showInstall && (
         <InstallBanner

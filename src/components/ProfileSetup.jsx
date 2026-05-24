@@ -2,13 +2,14 @@ import { useState, useRef } from 'react'
 
 const AVATARS = ['🧑‍🎣', '👴', '👩‍🎣', '🤠', '🎣', '🐟']
 
-export default function ProfileSetup({ onSave }) {
-  const [name, setName] = useState('')
-  const [river, setRiver] = useState('')
-  const [avatar, setAvatar] = useState(AVATARS[0])
-  const [photoData, setPhotoData] = useState(null)
+export default function ProfileSetup({ onSave, onCancel, initial }) {
+  const [name, setName] = useState(initial?.name || '')
+  const [river, setRiver] = useState(initial?.river || '')
+  const [avatar, setAvatar] = useState(initial?.avatar || AVATARS[0])
+  const [photoData, setPhotoData] = useState(initial?.photoData || null)
   const [cameraError, setCameraError] = useState(false)
   const fileRef = useRef()
+  const isEdit = !!initial
 
   function handlePhoto(e) {
     const file = e.target.files?.[0]
@@ -42,8 +43,8 @@ export default function ProfileSetup({ onSave }) {
   return (
     <div className="profile-setup-overlay">
       <div className="profile-setup">
-        <h2 className="profile-setup-title">🎣 Bem-vindo ao Pesquei!</h2>
-        <p className="profile-setup-sub">Configure seu perfil de pescador</p>
+        <h2 className="profile-setup-title">{isEdit ? '✏️ Editar perfil' : '🎣 Bem-vindo ao Pesquei!'}</h2>
+        <p className="profile-setup-sub">{isEdit ? 'Atualize seus dados de pescador' : 'Configure seu perfil de pescador'}</p>
 
         {/* Avatar / foto */}
         <div className="avatar-section">
@@ -118,8 +119,14 @@ export default function ProfileSetup({ onSave }) {
           onClick={handleSave}
           disabled={!name.trim()}
         >
-          Entrar na pescaria 🎣
+          {isEdit ? 'Salvar alterações' : 'Entrar na pescaria 🎣'}
         </button>
+
+        {isEdit && onCancel && (
+          <button className="btn-secondary btn-full" onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
       </div>
     </div>
   )

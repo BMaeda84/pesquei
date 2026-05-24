@@ -4,6 +4,7 @@ import { calcFishingIndex, getIndexLabel, getBestHours, getBestSpots } from '../
 import { useWeather } from '../hooks/useWeather'
 import { useRiverLevel } from '../hooks/useRiverLevel'
 import { getActiveFishNow, getNearestZone } from '../data/fishData'
+import FishingRules from './FishingRules'
 
 function ScoreRing({ score, color }) {
   const r = 52
@@ -116,6 +117,8 @@ export default function FishingDashboard({ location }) {
           </div>
         ))}
       </div>
+
+      <FishingRules riverLevel={riverLevel} />
     </div>
   )
 }
