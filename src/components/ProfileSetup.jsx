@@ -1,6 +1,47 @@
 import { useState, useRef } from 'react'
 
 const AVATARS = ['🧑‍🎣', '👴', '👩‍🎣', '🤠', '🎣', '🐟']
+const AVATAR_OUTPUT_SIZE = 120
+
+// Detecta rosto via FaceDetector API (Chrome/Android) ou usa heurística
+// para selfie (rosto tende ao terço superior-central da imagem)
+async function detectFaceCrop(img) {
+  const { width, height } = img
+
+  if (typeof window.FaceDetector !== 'undefined') {
+    try {
+      const detector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 })
+      const faces = await detector.detect(img)
+      if (faces.length > 0) {
+        const bb = faces[0].boundingBox
+        const faceW = bb.width
+        const faceH = bb.height
+        const faceCx = bb.x + faceW / 2
+        const faceCy = bb.y + faceH / 2
+
+        // Crop quadrado com padding de ~80% ao redor do rosto
+        let cropSize = Math.max(faceW, faceH) * 1.8
+        cropSize = Math.min(cropSize, Math.min(width, height))
+
+        let sx = faceCx - cropSize / 2
+        let sy = faceCy - cropSize / 2
+        sx = Math.max(0, Math.min(sx, width  - cropSize))
+        sy = Math.max(0, Math.min(sy, height - cropSize))
+
+        return { sx, sy, cropSize }
+      }
+    } catch { /* FaceDetector falhou, usa fallback */ }
+  }
+
+  // Fallback heurístico: rosto de selfie fica no terço superior-central
+  const cropSize = Math.min(width, height)
+  const sx = (width - cropSize) / 2
+  // Desloca para cima: começa em ~8% do topo em vez do centro
+  const sy = height > width
+    ? Math.max(0, height * 0.08)           // retrato: puxa para cima
+    : Math.max(0, (height - cropSize) / 2) // paisagem: centra
+  return { sx, sy, cropSize }
+}
 
 export default function ProfileSetup({ onSave, onCancel, initial }) {
   const [name, setName] = useState(initial?.name || '')
@@ -8,26 +49,33 @@ export default function ProfileSetup({ onSave, onCancel, initial }) {
   const [avatar, setAvatar] = useState(initial?.avatar || AVATARS[0])
   const [photoData, setPhotoData] = useState(initial?.photoData || null)
   const [cameraError, setCameraError] = useState(false)
+  const [processing, setProcessing] = useState(false)
   const fileRef = useRef()
   const isEdit = !!initial
 
-  function handlePhoto(e) {
+  async function handlePhoto(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    const canvas = document.createElement('canvas')
+    setProcessing(true)
+    const objectUrl = URL.createObjectURL(file)
     const img = new Image()
-    img.onload = () => {
-      // Reduz para max 120px (avatar pequeno)
-      const size = Math.min(img.width, img.height, 120)
-      canvas.width = size; canvas.height = size
-      const ctx = canvas.getContext('2d')
-      const sx = (img.width - size) / 2
-      const sy = (img.height - size) / 2
-      ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size)
-      setPhotoData(canvas.toDataURL('image/jpeg', 0.85))
+    img.onload = async () => {
+      try {
+        const { sx, sy, cropSize } = await detectFaceCrop(img)
+        const canvas = document.createElement('canvas')
+        canvas.width  = AVATAR_OUTPUT_SIZE
+        canvas.height = AVATAR_OUTPUT_SIZE
+        canvas.getContext('2d').drawImage(img, sx, sy, cropSize, cropSize, 0, 0, AVATAR_OUTPUT_SIZE, AVATAR_OUTPUT_SIZE)
+        setPhotoData(canvas.toDataURL('image/jpeg', 0.85))
+      } catch {
+        setCameraError(true)
+      } finally {
+        URL.revokeObjectURL(objectUrl)
+        setProcessing(false)
+      }
     }
-    img.onerror = () => setCameraError(true)
-    img.src = URL.createObjectURL(file)
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); setCameraError(true); setProcessing(false) }
+    img.src = objectUrl
   }
 
   function handleSave() {
@@ -72,8 +120,9 @@ export default function ProfileSetup({ onSave, onCancel, initial }) {
               <button
                 className="btn-secondary btn-sm"
                 onClick={() => fileRef.current?.click()}
+                disabled={processing}
               >
-                📷 Usar selfie
+                {processing ? 'Detectando rosto…' : '📷 Usar selfie'}
               </button>
               {cameraError && <p className="form-hint">Câmera não disponível</p>}
               <input
