@@ -104,6 +104,7 @@ function DexDetail({ fish, catches, onClose, onRefresh }) {
       ...form,
       icon: fish.icon,
       verified: !!prefill,
+      verifyToken: prefill?.verifyToken || null,
       date: new Date().toISOString(),
     })
     await onRefresh()

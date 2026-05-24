@@ -34,8 +34,37 @@ export async function getCache(key) {
 
 // Diary entries
 export async function saveDiaryEntry(entry) {
+  const now = new Date()
+
+  // S6 fix: sanitiza e clampeia todos os campos antes de persistir
+  const qty    = Math.min(Math.max(parseInt(entry.quantity) || 1, 1), 99)
+  const wt     = parseFloat(entry.weight)
+  const weight = !isNaN(wt) && wt > 0 ? Math.min(wt, 200) : null
+  const rating = Math.min(Math.max(parseInt(entry.rating) || 3, 1), 5)
+
+  // Anti-cheat D4: data nunca pode ser futura
+  const entryDate = entry.date ? new Date(entry.date) : now
+  const safeDate  = entryDate > now ? now : entryDate
+
+  // Anti-cheat D1/D2: verified só é aceito se vier com token de formato válido
+  const hasToken = typeof entry.verifyToken === 'string' && /^[0-9a-f]{32}$/.test(entry.verifyToken)
+  const verified = !!(entry.verified && hasToken)
+
+  const clean = {
+    species:     String(entry.species || '').slice(0, 60),
+    icon:        String(entry.icon || '🐟').slice(0, 8),
+    quantity:    qty,
+    weight,
+    rating,
+    notes:       String(entry.notes || '').slice(0, 500),
+    verified,
+    verifyToken: verified ? entry.verifyToken : null,
+    date:        safeDate.toISOString(),
+    createdAt:   now.toISOString(),
+  }
+
   const db = await getDB()
-  return db.add('diary', { ...entry, createdAt: new Date().toISOString() })
+  return db.add('diary', clean)
 }
 
 export async function getDiaryEntries() {
