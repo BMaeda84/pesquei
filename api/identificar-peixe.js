@@ -47,7 +47,10 @@ export default async function handler(req, res) {
     return res.status(413).json({ error: 'Imagem muito grande (máx ~2 MB)' })
   if (!ALLOWED_MEDIA_TYPES.includes(mediaType))
     return res.status(400).json({ error: 'Tipo de imagem não suportado' })
-  if (!/^[A-Za-z0-9+/]/.test(image))
+  // SAST-01: valida amostra da string; um único char não é suficiente
+  // base64 válido contém apenas A-Z a-z 0-9 + / e = no padding
+  const b64Sample = image.replace(/\s/g, '').slice(0, 200)
+  if (!/^[A-Za-z0-9+/]+=*$/.test(b64Sample))
     return res.status(400).json({ error: 'Formato de imagem inválido' })
 
   const apiKey = process.env.ANTHROPIC_API_KEY

@@ -2,17 +2,25 @@ import { useState, useEffect } from 'react'
 import { getDiaryEntries } from '../utils/cache'
 import { scoreSummary, scoreEntry, scoreLabel } from '../utils/scoring'
 import { generateShareCard, shareRankingCard, shareWhatsApp, shareFacebook } from '../utils/shareCard'
+import { buildShareUrl } from './RankingPublic'
+import FishStats from './FishStats'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
 dayjs.locale('pt-br')
 
 export default function DayRanking({ profile }) {
-  const [summary, setSummary] = useState(null)
-  const [sharing, setSharing] = useState(false)
+  const [summary,    setSummary]    = useState(null)
+  const [allEntries, setAllEntries] = useState([])
+  const [sharing,    setSharing]    = useState(false)
   const [previewUrl, setPreviewUrl] = useState(null)
+  const [rankTab,    setRankTab]    = useState('hoje')   // 'hoje' | 'historico'
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
-    getDiaryEntries().then(entries => setSummary(scoreSummary(entries)))
+    getDiaryEntries().then(entries => {
+      setSummary(scoreSummary(entries))
+      setAllEntries(entries)
+    })
   }, [])
 
   if (!summary) return <div className="ranking-loading">Carregando…</div>
@@ -42,8 +50,41 @@ export default function DayRanking({ profile }) {
     shareFacebook()
   }
 
+  async function handleShareLink() {
+    const url = buildShareUrl(profile, summary)
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: '🎣 Pesquei! — minha pescaria', url })
+      } else {
+        await navigator.clipboard.writeText(url)
+        setLinkCopied(true)
+        setTimeout(() => setLinkCopied(false), 3000)
+      }
+    } catch { /* usuário cancelou share */ }
+  }
+
   return (
     <div className="day-ranking">
+      {/* Abas Hoje / Histórico */}
+      <div className="rank-tabs">
+        <button
+          className={`rank-tab ${rankTab === 'hoje' ? 'active' : ''}`}
+          onClick={() => setRankTab('hoje')}
+        >📊 Hoje</button>
+        <button
+          className={`rank-tab ${rankTab === 'historico' ? 'active' : ''}`}
+          onClick={() => setRankTab('historico')}
+        >📅 Histórico</button>
+      </div>
+
+      {/* Aba Histórico */}
+      {rankTab === 'historico' && (
+        <FishStats entries={allEntries} />
+      )}
+
+      {/* Aba Hoje */}
+      {rankTab === 'hoje' && <>
+
       {/* Cabeçalho */}
       <div className="ranking-header">
         <div className="ranking-avatar">
@@ -145,7 +186,20 @@ export default function DayRanking({ profile }) {
         </div>
       </div>
 
+      {/* Botão compartilhar link */}
+      <div className="ranking-share-link">
+        <button
+          className="btn-secondary btn-full"
+          onClick={handleShareLink}
+          disabled={summary.entries.length === 0}
+        >
+          {linkCopied ? '✅ Link copiado!' : '🔗 Compartilhar link da pescaria'}
+        </button>
+      </div>
+
       <div className="ranking-date">{dayjs().format('dddd, DD [de] MMMM [de] YYYY')}</div>
+
+      </> /* fim aba Hoje */}
     </div>
   )
 }

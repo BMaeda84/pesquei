@@ -1,7 +1,7 @@
 import { openDB } from 'idb'
 
 const DB_NAME = 'pesquei-db'
-const DB_VERSION = 2
+const DB_VERSION = 3
 
 function getDB() {
   return openDB(DB_NAME, DB_VERSION, {
@@ -12,6 +12,10 @@ function getDB() {
       }
       if (oldVersion < 2) {
         db.createObjectStore('profile')
+      }
+      if (oldVersion < 3) {
+        // Pontos salvos pelo usuário no mapa
+        db.createObjectStore('spots', { keyPath: 'id', autoIncrement: true })
       }
     },
   })
@@ -92,4 +96,34 @@ export async function saveProfile(profile) {
 export async function clearProfile() {
   const db = await getDB()
   return db.delete('profile', 'current')
+}
+
+// ── Spots store ───────────────────────────────────────────────────────────
+// Campos sanitizados antes de persistir (SAST-06: photo já vem redimensionada)
+
+export async function getSpots() {
+  const db = await getDB()
+  const all = await db.getAll('spots')
+  return all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+export async function saveSpot(spot) {
+  // SAST: clampeia coordenadas ao bounding-box do Brasil
+  const latN = Math.max(-35, Math.min(5,   Number(spot.lat)))
+  const lngN = Math.max(-74, Math.min(-28, Number(spot.lng)))
+  const clean = {
+    name:      String(spot.name  || '').trim().slice(0, 50),
+    notes:     String(spot.notes || '').trim().slice(0, 300),
+    lat:       latN,
+    lng:       lngN,
+    photoData: spot.photoData || null, // base64 já redimensionado pelo cliente
+    createdAt: new Date().toISOString(),
+  }
+  const db = await getDB()
+  return db.add('spots', clean)
+}
+
+export async function deleteSpot(id) {
+  const db = await getDB()
+  return db.delete('spots', id)
 }

@@ -2474,3 +2474,234 @@ body::before {
 .backup-ok  { background: rgba(34,197,94,0.12);  color: #4ade80; }
 .backup-err { background: rgba(239,68,68,0.12);  color: #f87171; }
 .nav-station-note { font-size: 10px; color: var(--text-muted); }
+
+/* ══════════════════════════════════════════════════════════════
+   NOVOS RECURSOS — Spots, Previsão, Notificações, Social, Stats
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Notificações — opt-in e alerta matinal ─────────────────── */
+.notif-optin {
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #a5b4fc;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.notif-optin-btns { display: flex; gap: 8px; }
+
+.morning-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(34,197,94,0.14);
+  border: 1px solid rgba(34,197,94,0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4ade80;
+  margin-bottom: 12px;
+}
+
+/* ── Previsão 3 dias ────────────────────────────────────────── */
+.forecast-strip  { margin-top: 20px; }
+.forecast-title  { font-size: 14px; font-weight: 700; color: var(--text-muted);
+                   text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+.forecast-cards  { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.forecast-card   {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.fc-day   { font-size: 11px; color: var(--text-muted); text-transform: capitalize; }
+.fc-emoji { font-size: 22px; line-height: 1; margin: 2px 0; }
+.fc-score { font-size: 20px; font-weight: 800; line-height: 1; }
+.fc-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.fc-detail{ font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.fc-rain  { font-size: 10px; color: #7dd3fc; }
+
+/* ── Spots salvos ───────────────────────────────────────────── */
+.saved-spots { margin-top: 12px; }
+
+.spot-save-cta { margin-bottom: 12px; }
+
+.spot-form {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.spot-form-title  { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.spot-form-coords { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+
+.spot-photo-btn { display: inline-block; cursor: pointer; margin-bottom: 12px; }
+.spot-photo-preview {
+  position: relative; display: inline-block; margin-bottom: 12px;
+}
+.spot-photo-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+.spot-photo-preview .btn-tiny {
+  position: absolute; top: -6px; right: -6px;
+}
+
+.spots-list-title {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .05em;
+  margin: 14px 0 8px;
+}
+.spots-list { display: flex; flex-direction: column; gap: 10px; }
+
+.spot-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.spot-card:hover { border-color: rgba(103,232,249,.4); }
+
+.spot-card-photo {
+  width: 72px; min-width: 72px; height: 72px; object-fit: cover;
+}
+.spot-card-body  { padding: 10px 12px; flex: 1; }
+.spot-card-name  { font-size: 13px; font-weight: 700; }
+.spot-card-notes { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+.spot-card-coords{ font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+.spot-card-actions { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.spot-maps-btn {
+  font-size: 11px; background: rgba(103,232,249,.1);
+  color: #67e8f2; border-radius: 6px; padding: 3px 8px;
+  text-decoration: none;
+}
+.spot-confirm-del { font-size: 11px; color: var(--text-muted); }
+.btn-danger { background: rgba(239,68,68,.2); color: #f87171; }
+
+.spots-empty { text-align: center; padding: 20px 0; font-size: 13px; color: var(--text-muted); }
+
+/* ── Ranking — abas Hoje / Histórico ───────────────────────── */
+.rank-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,.05);
+  border-radius: 10px;
+  padding: 4px;
+}
+.rank-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.rank-tab.active {
+  background: rgba(103,232,249,.15);
+  color: #67e8f2;
+}
+
+.ranking-share-link { margin-top: 10px; margin-bottom: 4px; }
+
+/* ── Histórico / FishStats ──────────────────────────────────── */
+.fish-stats { padding-bottom: 20px; }
+
+.stats-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.stat-chip {
+  background: rgba(255,255,255,.06);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.stat-chip-n { font-size: 18px; font-weight: 800; color: #67e8f2; }
+.stat-chip-l { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+.stats-section { margin-bottom: 20px; }
+.stats-section-title {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 10px;
+}
+
+.stat-bar-row   { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.stat-bar-label { font-size: 12px; color: var(--text-muted); width: 130px; flex-shrink: 0;
+                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat-bar-track { flex: 1; background: rgba(255,255,255,.07); border-radius: 4px; height: 7px; overflow: hidden; }
+.stat-bar-fill  { height: 100%; border-radius: 4px; transition: width .6s ease; }
+.stat-bar-val   { font-size: 12px; color: var(--text-muted); width: 28px; text-align: right; }
+
+.stats-empty { text-align: center; padding: 32px 0; font-size: 13px; color: var(--text-muted); }
+
+/* ── Ranking Público (link compartilhado) ───────────────────── */
+.pub-ranking {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  padding: 0 0 40px;
+}
+.pub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.pub-app-name { font-size: 20px; font-weight: 800; color: #67e8f2; }
+.pub-close    { font-size: 12px; }
+
+.pub-profile  {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 24px 16px 16px;
+}
+.pub-avatar   { font-size: 48px; line-height: 1; }
+.pub-name     { font-size: 22px; font-weight: 800; margin-top: 8px; }
+.pub-river    { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.pub-date     { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.pub-score-block {
+  text-align: center;
+  padding: 16px;
+  background: rgba(255,255,255,.04);
+  margin: 0 12px;
+  border-radius: 14px;
+}
+.pub-pts       { font-size: 52px; font-weight: 900; line-height: 1; }
+.pub-pts-label { font-size: 12px; letter-spacing: .1em; color: var(--text-muted); }
+.pub-rank-label{ font-size: 16px; font-weight: 700; margin-top: 4px; }
+
+.pub-entries       { padding: 16px; }
+.pub-entries-title { font-size: 11px; font-weight: 700; color: var(--text-muted);
+                     letter-spacing: .08em; margin-bottom: 10px; }
+.pub-entry         { display: flex; align-items: center; gap: 10px; padding: 8px 0;
+                     border-bottom: 1px solid rgba(255,255,255,.06); }
+.pub-entry-icon    { font-size: 20px; }
+.pub-entry-info    { flex: 1; display: flex; flex-direction: column; }
+.pub-entry-sp      { font-size: 14px; font-weight: 600; }
+.pub-entry-det     { font-size: 11px; color: var(--text-muted); }
+.pub-entry-pts     { font-size: 16px; font-weight: 800; }
+
+.pub-cta           { padding: 24px 16px 8px; text-align: center; }
+.pub-cta-text      { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.pub-cta-btn       { max-width: 320px; margin: 0 auto; }

@@ -3,8 +3,11 @@ import { getMoonScore } from '../utils/moonPhase'
 import { calcFishingIndex, getIndexLabel, getBestHours, getBestSpots } from '../utils/fishingIndex'
 import { useWeather } from '../hooks/useWeather'
 import { useRiverLevel } from '../hooks/useRiverLevel'
+import { useForecast } from '../hooks/useForecast'
+import { useNotifications } from '../hooks/useNotifications'
 import { getActiveFishNow, getNearestZone } from '../data/fishData'
 import FishingRules from './FishingRules'
+import ForecastStrip from './ForecastStrip'
 
 function ScoreRing({ score, color }) {
   const r = 52
@@ -41,6 +44,7 @@ function FactorBadge({ factor }) {
 export default function FishingDashboard({ location }) {
   const { weather, loading: wLoading } = useWeather(location?.lat, location?.lng)
   const { riverLevel, previousLevel, stationName } = useRiverLevel(location?.lat, location?.lng)
+  const { days: forecastDays } = useForecast(location?.lat, location?.lng)
   const moonScore = useMemo(() => getMoonScore(), [])
 
   const zone = useMemo(() => getNearestZone(location?.lat, location?.lng), [location])
@@ -56,6 +60,10 @@ export default function FishingDashboard({ location }) {
   const { label, color } = getIndexLabel(score)
   const bestHours = useMemo(() => getBestHours(weather), [weather])
 
+  // Alerta matinal — aparece uma vez por dia se índice ≥ 55 e hora 5–9h
+  const { morningAlert, optInPending, requestPermission, declineNotifications, dismissMorningAlert }
+    = useNotifications(score, label)
+
   if (!location) {
     return (
       <div className="no-location">
@@ -68,6 +76,25 @@ export default function FishingDashboard({ location }) {
 
   return (
     <div className="dashboard">
+      {/* Prompt de opt-in para notificações — exibido uma única vez */}
+      {optInPending && (
+        <div className="notif-optin">
+          <span>🔔 Receber alerta matinal quando o índice estiver bom?</span>
+          <div className="notif-optin-btns">
+            <button className="btn-primary btn-sm" onClick={requestPermission}>Sim</button>
+            <button className="btn-secondary btn-sm" onClick={declineNotifications}>Não</button>
+          </div>
+        </div>
+      )}
+
+      {/* Banner de alerta matinal — score ≥ 55 entre 5h e 9h */}
+      {morningAlert && (
+        <div className="morning-alert">
+          <span>🎣 Bom dia! Índice {morningAlert.score}/100 — {morningAlert.label} para pescar!</span>
+          <button className="btn-tiny" onClick={dismissMorningAlert}>✕</button>
+        </div>
+      )}
+
       <div className="score-section">
         <ScoreRing score={score} color={color} />
         <div className="score-info">
@@ -117,6 +144,8 @@ export default function FishingDashboard({ location }) {
           </div>
         ))}
       </div>
+
+      <ForecastStrip days={forecastDays} />
 
       <FishingRules riverLevel={riverLevel} stationName={stationName} />
     </div>

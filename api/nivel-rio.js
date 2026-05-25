@@ -66,7 +66,14 @@ export default async function handler(req, res) {
   const { lat, lon } = req.query
   if (!lat || !lon) return res.status(400).json({ error: 'lat e lon obrigatórios' })
 
-  const station = nearestStation(parseFloat(lat), parseFloat(lon))
+  // SAST-02 / DAST: NaN propagava silenciosamente para Math.hypot → sempre retornava
+  // a primeira estação. Clampe dentro do bounding-box do Brasil.
+  const latN = parseFloat(lat)
+  const lonN = parseFloat(lon)
+  if (isNaN(latN) || isNaN(lonN) || latN < -35 || latN > 5 || lonN < -74 || lonN > -28)
+    return res.status(400).json({ error: 'Coordenadas fora do Brasil' })
+
+  const station = nearestStation(latN, lonN)
 
   try {
     const data = await fetchFromANA(station.code)

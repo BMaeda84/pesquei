@@ -9,8 +9,10 @@ import InstallBanner from './components/InstallBanner'
 import ProfileSetup from './components/ProfileSetup'
 import DayRanking from './components/DayRanking'
 import About from './components/About'
+import RankingPublic, { decodeSharePayload } from './components/RankingPublic'
 import { useInstallPrompt } from './hooks/useInstallPrompt'
 import { useProfile } from './hooks/useProfile'
+import { getSpots } from './utils/cache'
 import './App.css'
 
 const TABS = [
@@ -39,8 +41,24 @@ export default function App() {
   const [showInstall, setShowInstall] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
+  const [spots, setSpots] = useState([])
   const { canInstall, install } = useInstallPrompt()
   const { profile, loading: profileLoading, saveProfile } = useProfile()
+
+  // Detecta link de compartilhamento (?share=BASE64) — antes de tudo
+  const sharePayload = (() => {
+    try {
+      const p = new URLSearchParams(window.location.search).get('share')
+      return p ? decodeSharePayload(p) : null
+    } catch { return null }
+  })()
+
+  // Carrega pontos salvos (recarregado ao trocar para aba Local)
+  async function loadSpots() {
+    setSpots(await getSpots())
+  }
+
+  useEffect(() => { loadSpots() }, [])
 
   // Solicita GPS ao abrir
   useEffect(() => {
@@ -72,6 +90,18 @@ export default function App() {
   function handleSelectLocation(latlng) {
     setLocation(latlng)
     setTab('index')
+  }
+
+  // Página pública de ranking compartilhado — sem header/nav
+  if (sharePayload) {
+    return (
+      <div className="app">
+        <RankingPublic
+          data={sharePayload}
+          onClose={() => window.history.replaceState({}, '', window.location.pathname)}
+        />
+      </div>
+    )
   }
 
   // Enquanto o perfil carrega, mostra nada (evita flash do setup)
@@ -114,7 +144,7 @@ export default function App() {
 
       <main className="app-main">
         {tab === 'index'   && <FishingDashboard location={location} />}
-        {tab === 'map'     && <LocationPicker location={location} onSelect={handleSelectLocation} />}
+        {tab === 'map'     && <LocationPicker location={location} onSelect={handleSelectLocation} spots={spots} />}
         {tab === 'guide'   && <FishGuide location={location} />}
         {tab === 'diary'   && <FishDex location={location} />}
         {tab === 'ranking' && <DayRanking profile={profile} />}
@@ -125,7 +155,7 @@ export default function App() {
           <button
             key={t.id}
             className={`nav-btn ${tab === t.id ? 'active' : ''}`}
-            onClick={() => setTab(t.id)}
+            onClick={() => { setTab(t.id); if (t.id === 'map') loadSpots() }}
           >
             {t.label}
           </button>

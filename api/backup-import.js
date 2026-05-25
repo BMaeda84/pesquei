@@ -16,6 +16,17 @@ import crypto from 'crypto'
 
 const SECRET = process.env.BACKUP_HMAC_SECRET || 'dev-secret-change-me-in-vercel'
 
+// SAST-03: restringe CORS (idêntico ao backup-export.js)
+const ALLOWED_ORIGINS   = ['https://pesquei.vercel.app']
+const VERCEL_PREVIEW_RE = /^https:\/\/pesquei(-[\w-]+)?\.vercel\.app$/
+function resolveOrigin(origin) {
+  if (!origin) return null
+  if (ALLOWED_ORIGINS.includes(origin)) return origin
+  if (VERCEL_PREVIEW_RE.test(origin)) return origin
+  if (process.env.NODE_ENV !== 'production') return origin
+  return null
+}
+
 const ALLOWED = ['id', 'species', 'icon', 'quantity', 'weight', 'rating',
                  'notes', 'verified', 'verifyToken', 'date', 'createdAt']
 
@@ -45,7 +56,11 @@ function canonicalize(entries) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const allowedOrigin = resolveOrigin(req.headers.origin)
+  if (allowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
+    res.setHeader('Vary', 'Origin')
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   if (req.method === 'OPTIONS') return res.status(200).end()
