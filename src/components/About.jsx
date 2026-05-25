@@ -80,7 +80,7 @@ export default function About({ onClose }) {
             Desenvolvido por <strong>Bruno Maeda</strong> para o seu sogro,
             carinhosamente chamado de <strong>Téio</strong>, para que ele tenha
             uma noção maior da sua pescaria — índice do dia, guia de espécies,
-            Teioteca e ranking entre amigos.
+            PeixeDEX e ranking entre amigos.
           </p>
           <p className="about-text" style={{ marginTop: 8 }}>
             Se você chegou aqui pelo compartilhamento de um ranking, é bem-vindo!

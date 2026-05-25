@@ -135,14 +135,15 @@ export function getFishByHour(hour) {
 // Trechos/represas do Rio Tietê no interior de SP
 // prominentFish: espécies com maior presença naquele trecho
 export const TIETE_ZONES = [
-  { id: 'barra-bonita', name: 'Represa Barra Bonita', lat: -22.51, lon: -48.56, type: 'represa', prominentFish: ['tilapia', 'carpa', 'pacu'] },
-  { id: 'bariri',       name: 'Represa Bariri',       lat: -22.08, lon: -48.74, type: 'represa', prominentFish: ['tilapia', 'tucunare', 'pacu'] },
-  { id: 'ibitinga',     name: 'Represa Ibitinga',     lat: -21.76, lon: -48.99, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'carpa'] },
-  { id: 'promissao',    name: 'Represa Promissão',    lat: -21.49, lon: -49.86, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'bagre'] },
-  { id: 'nova-av',      name: 'Represa Nova Avanhandava', lat: -21.12, lon: -50.42, type: 'represa', prominentFish: ['tucunare', 'traira', 'tilapia'] },
-  { id: 'tres-irmaos',  name: 'Represa Três Irmãos',  lat: -20.68, lon: -51.21, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'pacu'] },
-  // trecho de rio livre (entre represas)
-  { id: 'rio-medio',    name: 'Rio Tietê (trecho livre)', lat: -22.62, lon: -48.95, type: 'rio', prominentFish: ['bagre', 'traira', 'lambari'] },
+  { id: 'barra-bonita', name: 'Represa Barra Bonita',     shortName: 'Bonita',   lat: -22.51, lon: -48.56, type: 'represa', prominentFish: ['tilapia', 'carpa', 'pacu'] },
+  { id: 'bariri',       name: 'Represa Bariri',           shortName: 'Bariri',   lat: -22.08, lon: -48.74, type: 'represa', prominentFish: ['tilapia', 'tucunare', 'pacu'] },
+  { id: 'ibitinga',     name: 'Represa Ibitinga',         shortName: 'Ibitinga', lat: -21.76, lon: -48.99, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'carpa'] },
+  { id: 'promissao',    name: 'Represa Promissão',        shortName: 'Promissão',lat: -21.49, lon: -49.86, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'bagre'] },
+  { id: 'nova-av',      name: 'Represa Nova Avanhandava', shortName: 'Avanha',   lat: -21.12, lon: -50.42, type: 'represa', prominentFish: ['tucunare', 'traira', 'tilapia'] },
+  { id: 'tres-irmaos',  name: 'Represa Três Irmãos',     shortName: 'Irmãos',   lat: -20.68, lon: -51.21, type: 'represa', prominentFish: ['tucunare', 'tilapia', 'pacu'] },
+  { id: 'rio-medio',    name: 'Rio Tietê (trecho livre)', shortName: 'Tietê',    lat: -22.62, lon: -48.95, type: 'rio',     prominentFish: ['bagre', 'traira', 'lambari'] },
+  // Região metropolitana de SP
+  { id: 'sp-metro',     name: 'Tietê — Grande SP',       shortName: 'Tietê',    lat: -23.50, lon: -46.80, type: 'rio',     prominentFish: ['tilapia', 'bagre', 'traira'] },
 ]
 
 // Retorna a zona mais próxima da coordenada informada

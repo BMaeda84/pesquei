@@ -85,7 +85,7 @@ export default function DayRanking({ profile }) {
       {sorted.length === 0 ? (
         <div className="ranking-empty">
           <p>Nenhuma captura hoje ainda.</p>
-          <p>Vá para o TeioDEX e registre sua primeira pescada! 🎣</p>
+          <p>Vá para o PeixeDEX e registre sua primeira pescada! 🎣</p>
         </div>
       ) : (
         <div className="ranking-list">

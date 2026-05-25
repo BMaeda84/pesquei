@@ -17,7 +17,7 @@ const TABS = [
   { id: 'index',   label: '🎣 Índice' },
   { id: 'map',     label: '📍 Local' },
   { id: 'guide',   label: '🐟 Guia' },
-  { id: 'diary',   label: '🐟 TeioDEX' },
+  { id: 'diary',   label: '🐟 PeixeDEX' },
   { id: 'ranking', label: '📊 Ranking' },
 ]
 
@@ -116,7 +116,7 @@ export default function App() {
         {tab === 'index'   && <FishingDashboard location={location} />}
         {tab === 'map'     && <LocationPicker location={location} onSelect={handleSelectLocation} />}
         {tab === 'guide'   && <FishGuide location={location} />}
-        {tab === 'diary'   && <FishDex />}
+        {tab === 'diary'   && <FishDex location={location} />}
         {tab === 'ranking' && <DayRanking profile={profile} />}
       </main>
 

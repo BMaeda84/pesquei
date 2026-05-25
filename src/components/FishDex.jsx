@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { FISH } from '../data/fishData'
+import { FISH, getNearestZone } from '../data/fishData'
 import { MIN_SIZES } from '../data/fishingRules'
 import { getDiaryEntries, saveDiaryEntry, deleteDiaryEntry } from '../utils/cache'
 import CameraCapture from './CameraCapture'
@@ -246,7 +246,7 @@ function DexDetail({ fish, catches, onClose, onRefresh }) {
 }
 
 // ── Componente principal ──────────────────────────────────
-export default function FishDex() {
+export default function FishDex({ location }) {
   const [entries, setEntries] = useState([])
   const [selected, setSelected] = useState(null)
 
@@ -255,6 +255,14 @@ export default function FishDex() {
   }
 
   useEffect(() => { loadEntries() }, [])
+
+  // Nome dinâmico baseado na bacia mais próxima do GPS
+  // Ex: "Bariri" → "BaririDEX" · sem GPS → "PeixeDEX"
+  const dexPrefix = useMemo(() => {
+    if (!location?.lat || !location?.lng) return 'Peixe'
+    const zone = getNearestZone(location.lat, location.lng)
+    return zone?.shortName || 'Peixe'
+  }, [location])
 
   const catchesByFish = useMemo(() => {
     const map = {}
@@ -271,10 +279,10 @@ export default function FishDex() {
 
   return (
     <div className="fishdex">
-      {/* Cabeçalho estilo Pokédex */}
+      {/* Cabeçalho com nome dinâmico por bacia */}
       <div className="dex-header">
         <div className="dex-title-area">
-          <span className="dex-title-pre">Teio</span>
+          <span className="dex-title-pre">{dexPrefix}</span>
           <span className="dex-title-main">DEX</span>
         </div>
         <div className="dex-progress-area">
