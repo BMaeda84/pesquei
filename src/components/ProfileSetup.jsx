@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import BackupRestore from './BackupRestore'
 
 const AVATARS = ['🧑‍🎣', '👴', '👩‍🎣', '🤠', '🎣', '🐟']
 const AVATAR_OUTPUT_SIZE = 120
@@ -176,6 +177,10 @@ export default function ProfileSetup({ onSave, onCancel, initial }) {
             Cancelar
           </button>
         )}
+
+        {/* Backup & Restauração — disponível no setup inicial (trocar de celular)
+            e no modo de edição do perfil */}
+        <BackupRestore onRestored={onCancel} />
       </div>
     </div>
   )

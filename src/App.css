@@ -2438,4 +2438,39 @@ body::before {
 .nav-unavailable-icon { font-size: 18px; flex-shrink: 0; }
 .nav-unavailable-label { font-size: 13px; font-weight: 700; color: var(--amber-light); }
 .nav-unavailable-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+/* ── Backup & Restauração ── */
+.backup-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.backup-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.backup-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.backup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.backup-status {
+  margin-top: 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  line-height: 1.4;
+}
+.backup-ok  { background: rgba(34,197,94,0.12);  color: #4ade80; }
+.backup-err { background: rgba(239,68,68,0.12);  color: #f87171; }
 .nav-station-note { font-size: 10px; color: var(--text-muted); }
